@@ -5,7 +5,7 @@ type Props = {
   children: React.ReactNode;
 };
 
-const MovieForm = ({ title, children }: Props) => {
+const MetadataFormRow = ({ title, children }: Props) => {
   return (
     <div className="mb-2">
       <label
@@ -19,4 +19,4 @@ const MovieForm = ({ title, children }: Props) => {
   );
 };
 
-export default MovieForm;
+export default MetadataFormRow;

@@ -1,16 +1,12 @@
-import React, { useState } from "react";
+import React, { useContext } from "react";
 import MovieSection from "./MovieSection";
+import MetadataFormRow from "./MetadataFormRow";
+import { FormikMovieProps } from "../types/form";
+import StateContext from "../state/StateContext";
+import { Field } from "formik";
 
-const MetadataSection = () => {
-  const [name, setName] = useState("");
-  const [studio, setStudio] = useState("");
-  const [email, setEmail] = useState("");
-
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    // Perform form submission logic here
-    console.log("Form submitted:", { name, studio, email });
-  };
+const MetadataSection = ({ formik }: FormikMovieProps) => {
+  const { state } = useContext(StateContext);
 
   return (
     <MovieSection
@@ -18,83 +14,59 @@ const MetadataSection = () => {
       description="Lorem, ipsum dolor sit amet consectetur adipisicing elit. Fuga minima explicabo ducimus dolorum omnis dolores deserunt incidunt atque, laborum sit expedita natus maiores eligendi, ab nostrum deleniti, facere consectetur tempora."
     >
       <div className="h-90">
-        <form className="" onSubmit={handleSubmit}>
-          <div className="mb-2">
-            <label
-              htmlFor="name"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
-              Name
-            </label>
-            <input
-              type="text"
-              id="name"
-              className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light"
-              placeholder="Name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
-            />
-          </div>
-          <div className="mb-2">
-            <label
-              htmlFor="studio"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
-              Studio
-            </label>
+        <form className="" onSubmit={formik.handleSubmit}>
+          <MetadataFormRow title="Name">
+            <div className="mb-2">
+              <Field
+                type="text"
+                placeholder="Name"
+                className="movie-data-input"
+                name="movieName"
+              />
+            </div>
+          </MetadataFormRow>
+          <MetadataFormRow title="studio">
             <select
               id="studio"
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              value={studio}
-              onChange={(e) => setStudio(e.target.value)}
-              required
+              className="movie-data-input"
+              {...formik.getFieldProps("movieStudioId")}
             >
-              <option value="">Select Studio</option>
-              <option value="US">United States</option>
-              <option value="CA">Canada</option>
-              <option value="FR">France</option>
-              <option value="DE">Germany</option>
+              {state?.studios?.map((studio, index) => {
+                return (
+                  <option value={index} key={index}>
+                    {studio}
+                  </option>
+                );
+              })}
             </select>
-          </div>
-          <div className="mb-2">
-            <label
-              htmlFor="studio"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
-              Studio
-            </label>
+          </MetadataFormRow>
+          <MetadataFormRow title="Series">
             <select
               id="studio"
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              value={studio}
-              onChange={(e) => setStudio(e.target.value)}
-              required
+              className="movie-data-input"
+              {...formik.getFieldProps("movieSeriesId")}
             >
-              <option value="">Select Studio</option>
-              <option value="US">United States</option>
-              <option value="CA">Canada</option>
-              <option value="FR">France</option>
-              <option value="DE">Germany</option>
+              {state?.series?.map((serie, index) => {
+                return (
+                  <option value={index} key={index}>
+                    {serie}
+                  </option>
+                );
+              })}
             </select>
-          </div>
-          <div className="mb-2">
-            <label
-              htmlFor="email"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
-              Email
-            </label>
-            <input
-              type="email"
-              id="email"
-              className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 dark:shadow-sm-light"
-              placeholder="Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-          </div>
+          </MetadataFormRow>
+
+          <MetadataFormRow title="Series #">
+            <div className="mb-2">
+              <Field
+                type="text"
+                placeholder="Name"
+                className="movie-data-input"
+                name="movieSeriesNumber"
+              />
+            </div>
+          </MetadataFormRow>
+
           <div className="flex w-full gap-x-4 justify-between">
             <button
               type="submit"

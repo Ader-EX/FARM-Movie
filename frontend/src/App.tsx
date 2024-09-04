@@ -1,33 +1,39 @@
+import { useReducer } from "react";
 import "./App.css";
 import Container from "./components/Container";
-import MovieSection from "./components/MovieSection";
+
 import MainPage from "./pages/MainPage";
+import reducer from "./state/reducer";
+import { initialState } from "./state/initialState";
+import StateContext from "./state/StateContext";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import AdminPage from "./pages/AdminPage";
 
 function App() {
+  const [state, dispatch] = useReducer(reducer, initialState);
+
   return (
     <>
-      <Container>
-        <div className="items-start flex w-full flex-col gap-2 py-4">
-          <h2
-            className=" text-xl text-opacity-60 text-white font-bold
-          "
-          >
-            Community Stats
-          </h2>
-          <h1 className="text-4xl font-semibold">Movie Enjoyer Viewer</h1>
-          <p className="max-w-xl text-left text-xl">
-            Interactive Movie,Clips, and Actor adder made using{" "}
-            <span className="text-primary-blue font-semibold">Typescript</span>{" "}
-            and <span className="text-primary-blue font-semibold">FastAPI</span>
-            . Checkout the{" "}
-            <span className="text-primary-blue font-semibold">
-              Github Repository
-            </span>{" "}
-            for more information
-          </p>
-        </div>
-        <MainPage />
-      </Container>
+      <BrowserRouter>
+        <StateContext.Provider value={{ state, dispatch }}>
+          <Container>
+            <Routes>
+              <Route path="/" element={<MainPage />} />
+              <Route path="/admin" element={<AdminPage />} />
+              {/* Add more routes here */}
+              {/* <Route exact path="/movies/:id" element={<MovieDetails />} /> */}
+              {/* <Route exact path="/actors/:id" element={<ActorDetails />} /> */}
+              {/* <Route exact path="/series/:id" element={<SeriesDetails />} /> */}
+              {/* <Route exact path="/add-movie" element={<AddMovie />} /> */}
+              {/* <Route exact path="/add-actor" element={<AddActor />} /> */}
+              {/* <Route exact path="/add-series" element={<AddSeries />} /> */}
+              {/* <Route exact path="/search" element={<SearchPage />} /> */}
+              {/* <Route exact path="/about" element={<AboutPage />} /> */}
+              {/* <Route exact path="/contact" element={<ContactPage />} /> */}
+            </Routes>
+          </Container>
+        </StateContext.Provider>
+      </BrowserRouter>
     </>
   );
 }

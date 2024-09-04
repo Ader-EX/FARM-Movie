@@ -1,57 +1,49 @@
-import React from "react";
+import React, { useContext } from "react";
 import MovieSection from "./MovieSection";
+import ActorSelector from "./ActorSelectorList";
+import StateContext from "../state/StateContext";
+import { FormikMovieProps } from "../types/form";
+const ActorSection = ({ formik }: FormikMovieProps) => {
+  const { state } = useContext(StateContext);
 
-const ActorSection = () => {
   return (
     <MovieSection
       title="Actor Section"
       description="Lorem, ipsum dolor sit amet consectetur adipisicing elit. Fuga minima explicabo ducimus dolorum omnis dolores deserunt incidunt atque, laborum sit expedita natus maiores eligendi, ab nostrum deleniti, facere consectetur tempora."
     >
-      <div className="flex h-96  gap-4 w-full justify-between">
-        <div className="md:w-1/2 sm:w-full">
+      <div className="flex h-84  gap-4 w-full justify-between">
+        <ActorSelector title="Available">
           <div className=" ">
             <form className="">
-              <label htmlFor="years" className="block mb-2 text-lg font-medium">
-                <h2>Available</h2>
-              </label>
               <select
-                id="years"
                 size={10}
+                {...formik.getFieldProps("movieActorAvailableId")}
                 className=" text-lg rounded-lg focus:ring-primary-blue focus:border-primary-blue block w-full p-2.5 dark:bg-slate-800 dark:border-gray-600 dark:placeholder-white dark:text-white"
               >
-                <option>Star Wars 2020</option>
-                <option>Lord Of The Rings</option>
-                <option>Ironman 5</option>
-                <option>Avengers : Infinity War</option>
-                <option>Night in Elm Street</option>
-                <option>Friday the 10th</option>
-                <option>Children of The Corn</option>
+                {state?.actors?.map((act, index) => {
+                  return (
+                    <option key={index} value={index}>
+                      {act}
+                    </option>
+                  );
+                })}
               </select>
             </form>
           </div>
-        </div>
-        <div className="md:w-1/2 sm:w-full">
+        </ActorSelector>
+        <ActorSelector title="Selected">
           <div>
             <form className=" ">
-              <label htmlFor="years" className="block mb-2 text-lg font-medium">
-                <h2>Selected</h2>
-              </label>
               <select
-                id="years"
                 size={10}
+                {...formik.getFieldProps("movieActorSelectedId")}
                 className=" text-lg rounded-lg focus:ring-primary-blue focus:border-primary-blue block w-full p-2.5 dark:bg-slate-800 dark:border-gray-600 dark:placeholder-white dark:text-white"
               >
-                <option>Star Wars 2020</option>
-                <option>Lord Of The Rings</option>
-                <option>Ironman 5</option>
-                <option>Avengers : Infinity War</option>
-                <option>Night in Elm Street</option>
-                <option>Friday the 10th</option>
-                <option>Children of The Corn</option>
+                <option>1</option>
               </select>
             </form>
           </div>
-        </div>
+        </ActorSelector>
       </div>
     </MovieSection>
   );
