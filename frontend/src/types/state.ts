@@ -1,6 +1,23 @@
+export interface MovieDataBaseType {
+  id: number;
+  name: string;
+}
+
+export type MovieFileType = {
+  id: number;
+  filename: string;
+};
+
+export type ActorType = MovieDataBaseType;
+export type CategoryType = MovieDataBaseType;
+
+export type StudioType = MovieDataBaseType;
+
+export type SeriesType = MovieDataBaseType;
+
 export type StateType = {
-  movies: string[];
-  actors: string[];
+  movies: MovieFileType[];
+  actors: ActorType[];
   categories: string[];
   series: string[];
   studios: string[];
@@ -34,7 +51,7 @@ export type ActionType =
   | { type: Actions.SET_CATEGORIES; payload: string }
   | { type: Actions.SET_SERIES; payload: string }
   | { type: Actions.SET_STUDIO; payload: string }
-  | { type: Actions.SELECT_MOVIE; payload: number }
+  | { type: Actions.SELECT_MOVIE; payload: string[] }
   | { type: Actions.SELECT_ACTORS; payload: string[] }
   | { type: Actions.SELECT_CATEGORIES; payload: string[] }
   | { type: Actions.SET_MOVIE_NAME; payload: string }

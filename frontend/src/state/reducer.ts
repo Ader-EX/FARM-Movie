@@ -3,9 +3,9 @@ import { ActionType, StateType } from "../types/state";
 export default (state: StateType, action: ActionType) => {
   switch (action.type) {
     case "SET_MOVIES":
-      return { ...state, movies: [...state.movies, action.payload] };
+      return { ...state, movies: action.payload };
     case "SET_SERIES":
-      return { ...state, movies: [...state.series, action.payload] };
+      return { ...state, series: [...state.series, action.payload] };
     case "SET_ACTORS":
       return { ...state, actors: [...state.actors, action.payload] };
     case "SET_CATEGORIES":

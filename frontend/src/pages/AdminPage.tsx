@@ -1,10 +1,11 @@
 import MovieSection from "../components/MovieSection";
 import MetadataFormRow from "../components/MetadataFormRow";
 import { Field, Formik, FormikHelpers } from "formik";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import StateContext from "../state/StateContext";
 import { Actions } from "../types/state";
 import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 type AdminFormValues = {
   name: string;
@@ -15,8 +16,11 @@ const initialValues: AdminFormValues = {
   name: "",
   selection: "actor",
 };
+
 const AdminPage = () => {
+  const [importStatus, setImportStatus] = useState("");
   const { dispatch } = useContext(StateContext);
+  const navigate = useNavigate();
   const onSubmit = async (
     values: AdminFormValues,
     helpers: FormikHelpers<AdminFormValues>
@@ -24,10 +28,36 @@ const AdminPage = () => {
     switch (values.selection) {
       case "actor":
         // Perform actor creation logic
-        dispatch({
-          type: Actions.SET_ACTORS,
-          payload: values.name,
-        });
+        try {
+          const response = await fetch(
+            `${import.meta.env.VITE_REACT_APP_BACKEND}/add_actors`,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ name: values.name }),
+            }
+          );
+          const data = await response.json();
+          console.log(data);
+          if (!response.ok) {
+            toast.error(
+              `Failed to create actor: ${
+                data?.detail?.error ? data?.detail?.error : "ERROR"
+              }  `
+            );
+          } else {
+            toast.success(`Actor ${values.name} created successfully!`);
+            navigate("/");
+          }
+          // dispatch({
+          //   type: Actions.SET_ACTORS,
+          //   payload: values.name,
+          // });
+        } catch (error) {
+          console.error(error);
+        }
 
         break;
       case "category":
@@ -55,7 +85,39 @@ const AdminPage = () => {
         break;
     }
     helpers.setFieldValue("name", "");
-    toast.success("Data added successfully!");
+  };
+  const onImportClick = async () => {
+    const baseUrl = import.meta.env.VITE_REACT_APP_BACKEND;
+
+    // Perform import logic
+    try {
+      const response = await fetch(`${baseUrl}/import_movies`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      if (!response.ok) {
+        setImportStatus("failed");
+        throw new Error("Failed to import data");
+      }
+      const data = await response.json();
+      console.log(data);
+      setImportStatus("success");
+
+      // Process the imported data
+      console.log("Import data:", data);
+      // Perform additional processing or validation if needed
+      // dispatch({ type: Actions.SET_ACTORS, payload: data.actors });
+      // dispatch({ type: Actions.SET_CATEGORIES, payload: data.categories });
+      // dispatch({ type: Actions.SET_SERIES, payload: data.series });
+      // dispatch({ type: Actions.SET_STUDIO, payload: data.studio });
+      toast.success("Data imported successfully!");
+    } catch (error: unknown) {
+      toast.error("Failed to import data: " + error);
+
+      return;
+    }
   };
 
   return (
@@ -122,11 +184,21 @@ const AdminPage = () => {
               >
                 Add {formik.values.selection}
               </button>
+
               <br />
             </form>
           )}
         </Formik>
       </div>
+      <button
+        type="button"
+        className="text-white my-2 capitalize  text-xl w-full bg-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg px-5 py-2.5 text-center "
+        onClick={onImportClick}
+      >
+        Import Clips
+      </button>
+
+      {importStatus}
     </MovieSection>
   );
 };
