@@ -1,11 +1,38 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import MovieSection from "./MovieSection";
 import ActorSelector from "./ActorSelectorList";
 import StateContext from "../state/StateContext";
 import { FormikMovieProps } from "../types/form";
+import { Actions } from "../types/state";
+import SketelonPlaceholder from "./SketelonPlaceholder";
 const ActorSection = ({ formik }: FormikMovieProps) => {
-  const { state } = useContext(StateContext);
+  const [isLoading, setIsLoading] = useState(false);
+  const { state, dispatch } = useContext(StateContext);
 
+  useEffect(() => {
+    (async () => {
+      setIsLoading(true);
+      try {
+        const response = await fetch(
+          `${import.meta.env.VITE_REACT_APP_BACKEND}/get_actors`,
+          {
+            method: "GET",
+          }
+        );
+        const data = await response.json();
+
+        // Log the actual fetched data
+        console.log("Fetched data:", data);
+
+        // Dispatch the data to the reducer
+        dispatch({ type: Actions.SET_ACTORS, payload: data });
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+        setIsLoading(false);
+      } catch (error) {
+        console.error("Error fetching movies:", error);
+      }
+    })();
+  }, []);
   return (
     <MovieSection
       title="Actor Section"
@@ -15,19 +42,23 @@ const ActorSection = ({ formik }: FormikMovieProps) => {
         <ActorSelector title="Available">
           <div className=" ">
             <form className="">
-              <select
-                size={10}
-                {...formik.getFieldProps("movieActorAvailableId")}
-                className=" text-lg rounded-lg focus:ring-primary-blue focus:border-primary-blue block w-full p-2.5 dark:bg-slate-800 dark:border-gray-600 dark:placeholder-white dark:text-white"
-              >
-                {state?.actors?.map((act, index) => {
-                  return (
-                    <option key={index} value={index}>
-                      {act}
-                    </option>
-                  );
-                })}
-              </select>
+              {isLoading ? (
+                <SketelonPlaceholder />
+              ) : (
+                <select
+                  size={10}
+                  {...formik.getFieldProps("movieActorAvailableId")}
+                  className=" text-lg rounded-lg focus:ring-primary-blue focus:border-primary-blue block w-full p-2.5 dark:bg-slate-800 dark:border-gray-600 dark:placeholder-white dark:text-white"
+                >
+                  {state?.actors?.map((act) => {
+                    return (
+                      <option key={act.id} value={act.id}>
+                        {act.name}
+                      </option>
+                    );
+                  })}
+                </select>
+              )}
             </form>
           </div>
         </ActorSelector>

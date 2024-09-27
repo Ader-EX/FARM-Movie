@@ -19,8 +19,8 @@ export type StateType = {
   movies: MovieFileType[];
   actors: ActorType[];
   categories: string[];
-  series: string[];
-  studios: string[];
+  series: SeriesType[];
+  studios: StudioType[];
 };
 
 export enum Actions {

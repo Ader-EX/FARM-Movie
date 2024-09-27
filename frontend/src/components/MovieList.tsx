@@ -5,11 +5,27 @@ import StateContext from "../state/StateContext";
 import { FormikMovieProps } from "../types/form";
 import { Actions } from "../types/state";
 import SketelonPlaceholder from "./SketelonPlaceholder";
+import { MovieInfoResponseType } from "../types/api";
 
 const MovieList = ({ formik }: FormikMovieProps) => {
   const { state, dispatch } = useContext(StateContext);
   const [isLoading, setIsLoading] = useState(false);
   const baseUrl = import.meta.env.VITE_REACT_APP_BACKEND;
+
+  const onSelectMovieHandler = async (id: number) => {
+    const response = await fetch(`${baseUrl}/movies/${id}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    const data = await response.json();
+    if (response.ok) {
+      console.log(data);
+      formik.setFieldValue("movieName", data.name);
+    }
+  };
+
   useEffect(() => {
     (async () => {
       setIsLoading(true);
@@ -19,10 +35,8 @@ const MovieList = ({ formik }: FormikMovieProps) => {
         });
         const data = await response.json();
 
-        // Log the actual fetched data
-        console.log("Fetched data:", data);
+        console.log("Fetched data:", data); // Check the fetched data
 
-        // Dispatch the data to the reducer
         dispatch({ type: Actions.SET_MOVIES, payload: data });
         await new Promise((resolve) => setTimeout(resolve, 1000));
         setIsLoading(false);
@@ -31,6 +45,35 @@ const MovieList = ({ formik }: FormikMovieProps) => {
       }
     })();
   }, [baseUrl, dispatch]);
+
+  useEffect(() => {
+    (async () => {
+      if (formik.values.movieId) {
+        const response = await fetch(
+          `${baseUrl}/movies/${formik.values.movieId}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        const data: MovieInfoResponseType = await response.json();
+        console.log("data.movieList", data);
+        if (response.ok) {
+          formik.setValues({
+            ...formik.values,
+            movieName: data.name ?? "",
+            movieSeriesId: data.series ? data.series.id.toString() : "",
+            movieSeriesNumber: data.series_number
+              ? data.series_number.toString()
+              : "",
+            movieStudioId: data.studio ? data.studio.id.toString() : "",
+          });
+        }
+      }
+    })();
+  }, [formik.values.movieId]);
 
   return (
     <div>
@@ -47,6 +90,11 @@ const MovieList = ({ formik }: FormikMovieProps) => {
           ) : (
             <select
               {...formik.getFieldProps("movieId")}
+              onChange={(e) => {
+                formik.handleChange(e); // Use Formik's default handler
+                const selectedMovieId = Number(e.target.value);
+                onSelectMovieHandler(selectedMovieId); // Fetch the movie details
+              }}
               size={10}
               className=" text-lg rounded-lg focus:ring-primary-blue h-96 focus:border-primary-blue block w-full p-2.5 dark:bg-slate-800 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
             >

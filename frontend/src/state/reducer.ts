@@ -5,9 +5,11 @@ export default (state: StateType, action: ActionType) => {
     case "SET_MOVIES":
       return { ...state, movies: action.payload };
     case "SET_SERIES":
-      return { ...state, series: [...state.series, action.payload] };
+      return { ...state, series: action.payload };
     case "SET_ACTORS":
-      return { ...state, actors: [...state.actors, action.payload] };
+      return { ...state, actors: action.payload };
+    case "SET_STUDIO":
+      return { ...state, studios: action.payload };
     case "SET_CATEGORIES":
       return { ...state, categories: [...state.categories, action.payload] };
     case "SELECT_MOVIE":

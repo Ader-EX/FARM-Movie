@@ -4,6 +4,7 @@ import CategoriesSection from "../components/CategoriesSection";
 import MetadataSection from "../components/MetadataSection";
 import MovieList from "../components/MovieList";
 import { MainPageInitialStateType } from "../types/form";
+import toast from "react-hot-toast";
 
 const initialValues: MainPageInitialStateType = {
   movieId: "",
@@ -11,8 +12,8 @@ const initialValues: MainPageInitialStateType = {
   movieStudioId: "",
   movieSeriesId: "",
   movieSeriesNumber: "",
-  movieActorAvailableId: "",
-  movieActorSelectedId: "",
+  movieActorAvailableId: undefined,
+  movieActorSelectedId: undefined,
   movieCategories: [],
 };
 
@@ -20,7 +21,30 @@ const onSubmit = async (
   val: MainPageInitialStateType,
   helpers: FormikHelpers<MainPageInitialStateType>
 ) => {
-  console.log(val);
+  console.log("Main VAl", val);
+
+  if (val.movieId) {
+    const baseUrl = import.meta.env.VITE_REACT_APP_BACKEND;
+
+    const body = {
+      name: val.movieName ? val.movieName : null,
+      studio_id: val.movieStudioId ? +val.movieStudioId : null, // Corrected to `studio_id`
+      series_id: val.movieSeriesId ? +val.movieSeriesId : null, // Corrected to `series_id`
+      series_num: val.movieSeriesNumber ? +val.movieSeriesNumber : null, // Corrected to `series_num`
+    };
+
+    console.log("body", body);
+    const response = await fetch(`${baseUrl}/movie/${val.movieId}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+    });
+    const data = await response.json();
+    toast.success("Data saved successfully");
+    console.log("data", data);
+  }
 };
 
 const MainPage = () => {

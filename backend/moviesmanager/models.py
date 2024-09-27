@@ -48,7 +48,6 @@ class Movie(Base):
     actors = relationship("Actor", secondary=movie_actors, back_populates="movies", order_by="Actor.name")
     categories = relationship("Category", secondary=movie_categories, back_populates="movies", order_by="Category.name")
     
-    # One-to-one relationship with Series and Studio
     series = relationship("Serie", back_populates="movies", uselist=False)
     studio = relationship("Studio", back_populates="movies", uselist=False)
 
@@ -57,7 +56,6 @@ class Serie(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String(255), nullable=False, unique=True)
     
-    # One-to-many relationship with Movie
     movies = relationship("Movie", back_populates="series", order_by="Movie.name")
 
 class Studio(Base):
@@ -65,5 +63,5 @@ class Studio(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String(255), nullable=False, unique=True)
     
-    # One-to-many relationship with Movie
     movies = relationship("Movie", back_populates="studio", order_by="Movie.name")
+

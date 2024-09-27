@@ -5,9 +5,9 @@ export type MainPageInitialStateType = {
   movieName: string;
   movieStudioId: string;
   movieSeriesId: string;
-  movieSeriesNumber: string | undefined;
-  movieActorAvailableId: string;
-  movieActorSelectedId: string;
+  movieSeriesNumber: string;
+  movieActorAvailableId: string | undefined;
+  movieActorSelectedId: string | undefined;
   movieCategories: string[];
 };
 

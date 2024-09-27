@@ -13,11 +13,12 @@ from fastapi.middleware.cors import CORSMiddleware
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
-    allow_origin_regex=r"http://(?:127\.0\.0\.1|localhost):5173",  # Fix typo and regex
+    allow_origins=["http://localhost:5173"],  # Allow specific origin
     allow_credentials=True,  # If you need to support credentials (e.g., cookies)
     allow_methods=["*"],  # Allow all methods (GET, POST, etc.)
-    allow_headers=["*"]  # Allow all headers
+    allow_headers=["*"],  # Allow all headers
 )
+
 
 Base.metadata.create_all(bind=engine)
 
@@ -44,6 +45,12 @@ async def get_movies(db : Session = Depends(get_db)):
      movies  = crud.get_all_movies(db)
      
      return movies  
+
+@app.get("/get_actors", response_model=List[schemas.ActorProperty])
+async def get_actors(db : Session = Depends(get_db)):
+    actors = crud.get_all_actors(db)
+    return actors
+
 
 
 
@@ -78,8 +85,48 @@ async def import_movies(db: Session = Depends(get_db)):
     return movies
 
 
-@app.post("/add_actors", response_model=schemas.Actor, )
+@app.post("/add_actors", response_model=schemas.Actor )
 async def add_actor(data : schemas.MovieProperty,db : Session = Depends(get_db) ):
     actor = crud.add_actor(db, data.name)
     if actor is None: raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail={"error": "Data must not be null / data already in database."})
     return actor
+
+@app.get("/movies/{id}",response_model=schemas.Movie )
+async def get_movie(id: int,db : Session = Depends(get_db)):
+    movies = crud.get_movie(db,id)
+    if movies is None: raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail={"error": "Movie not found ,{id} doesnt exist."})
+    return movies
+    
+
+@app.put("/movie/{id}", response_model= schemas.Movie)
+async def update_movie_data(id: int,data : schemas.MovieUpdateSchema,db : Session = Depends(get_db)):
+    movie = crud.update_movie(db,id,data)
+    if movie is None: raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail={"error": "Movie not found ,{id} doesnt exist."})
+    return movie
+
+@app.post("/movie/add_category/", response_model=schemas.Movie)
+async def add_movie_category(movie_id: int,category_id : int, db : Session = Depends(get_db)):
+    movie = crud.add_movie_category(db,movie_id,category_id)
+    if movie is None: raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail={"error": "Category not found ,{movie_id} doesnt exist."})
+    return movie
+
+
+@app.get("/categories", response_model=schemas.Category)
+async def get_all_categories(db : Session = Depends(get_db)):
+    categories = crud.get_category(db)
+    return categories
+
+@app.get("/actors", response_model=schemas.Actor)
+async def get_all_actors(db : Session = Depends(get_db)):
+    actors = crud.get_all_actors(db)
+    return actors
+
+@app.get("/studios", response_model=List[schemas.Studio])
+async def get_all_studios(db : Session = Depends(get_db)):
+    studios = crud.get_all_studios(db)
+    return studios
+
+@app.get("/series", response_model=List[schemas.Series])
+async def get_all_series(db : Session = Depends(get_db)):
+    series = crud.get_all_series(db)
+    return series
