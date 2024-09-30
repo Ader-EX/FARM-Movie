@@ -105,18 +105,40 @@ async def update_movie_data(id: int,data : schemas.MovieUpdateSchema,db : Sessio
     return movie
 
 @app.post("/movie/add_category/", response_model=schemas.Movie)
-async def add_movie_category(movie_id: int,category_id : int, db : Session = Depends(get_db)):
-    movie = crud.add_movie_category(db,movie_id,category_id)
-    if movie is None: raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail={"error": "Category not found ,{movie_id} doesnt exist."})
+async def add_movie_category(
+    movie_id: int,
+    category_id: int,
+    db: Session = Depends(get_db)
+):
+    movie = crud.add_movie_category(db, movie_id, category_id)
+    if movie is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail={"error": f"Movie with id {movie_id} not found or category could not be added."}
+        )
+    return movie
+
+@app.delete("/movie/add_category/", response_model=schemas.Movie)
+async def add_movie_category(
+    movie_id: int,
+    category_id: int,
+    db: Session = Depends(get_db)
+):
+    movie = crud.delete_movie_category(db, movie_id, category_id)
+    if movie is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail={"error": f"Movie with id {movie_id} not found or category could not be added."}
+        )
     return movie
 
 
-@app.get("/categories", response_model=schemas.Category)
+@app.get("/categories", response_model=List[schemas.Category])
 async def get_all_categories(db : Session = Depends(get_db)):
-    categories = crud.get_category(db)
+    categories = crud.get_all_category(db)
     return categories
 
-@app.get("/actors", response_model=schemas.Actor)
+@app.get("/actors", response_model=List[schemas.Actor])
 async def get_all_actors(db : Session = Depends(get_db)):
     actors = crud.get_all_actors(db)
     return actors
@@ -130,3 +152,32 @@ async def get_all_studios(db : Session = Depends(get_db)):
 async def get_all_series(db : Session = Depends(get_db)):
     series = crud.get_all_series(db)
     return series
+
+
+@app.post("/actors/select/", response_model=schemas.Actor)
+async def select_actors(
+    movie_id: int,
+    data: int,
+    db: Session = Depends(get_db)
+):
+    movie = crud.select_actors(db, movie_id, data)
+    if movie is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail={"error": f"Movie with id {movie_id} not found or category could not be added."}
+        )
+    return movie
+
+@app.delete("/actors/select/", response_model=schemas.Actor)
+async def delete_actors(
+    movie_id: int,
+    data: int,
+    db: Session = Depends(get_db)
+):
+    movie = crud.delete_movie_actor(db, movie_id, data)
+    if movie is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail={"error": f"Movie with id {movie_id} not found or category could not be added."}
+        )
+    return movie

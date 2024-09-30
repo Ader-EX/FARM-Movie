@@ -11,7 +11,7 @@ const MovieList = ({ formik }: FormikMovieProps) => {
   const { state, dispatch } = useContext(StateContext);
   const [isLoading, setIsLoading] = useState(false);
   const baseUrl = import.meta.env.VITE_REACT_APP_BACKEND;
-
+  console.log(state?.actorsSelected);
   const onSelectMovieHandler = async (id: number) => {
     const response = await fetch(`${baseUrl}/movies/${id}`, {
       method: "GET",
@@ -60,6 +60,8 @@ const MovieList = ({ formik }: FormikMovieProps) => {
         );
         const data: MovieInfoResponseType = await response.json();
         console.log("data.movieList", data);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
         if (response.ok) {
           formik.setValues({
             ...formik.values,
@@ -69,11 +71,17 @@ const MovieList = ({ formik }: FormikMovieProps) => {
               ? data.series_number.toString()
               : "",
             movieStudioId: data.studio ? data.studio.id.toString() : "",
+            movieCategories: data.categories.map((item) => item.id.toString()),
+          });
+          dispatch({
+            type: Actions.SELECT_ACTORS,
+            payload: data.actors,
           });
         }
       }
     })();
-  }, [formik.values.movieId]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [formik.values.movieId, dispatch]);
 
   return (
     <div>

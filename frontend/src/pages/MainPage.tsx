@@ -62,7 +62,10 @@ const MainPage = () => {
               <span className="text-primary-blue font-semibold">
                 Typescript,
               </span>{" "}
-              <span className="text-primary-blue font-semibold"> Redux,</span>{" "}
+              <span className="text-primary-blue font-semibold">
+                {" "}
+                React Context,
+              </span>{" "}
               and{" "}
               <span className="text-primary-blue font-semibold">FastAPI</span>.
               Checkout the{" "}

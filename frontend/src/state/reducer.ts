@@ -11,15 +11,15 @@ export default (state: StateType, action: ActionType) => {
     case "SET_STUDIO":
       return { ...state, studios: action.payload };
     case "SET_CATEGORIES":
-      return { ...state, categories: [...state.categories, action.payload] };
+      return { ...state, categories: action.payload };
     case "SELECT_MOVIE":
       return { ...state, selectedMovieId: action.payload };
     case "DESELECT_MOVIE":
       return { ...state, selectedMovieId: null };
     case "SELECT_ACTORS":
-      return { ...state, selectedActors: action.payload };
+      return { ...state, actorsSelected: action.payload };
     case "DESELECT_ACTORS":
-      return { ...state, selectedActors: null };
+      return { ...state, actorsSelected: null };
     case "SELECT_CATEGORIES":
       return { ...state, selectedCategories: action.payload };
     case "DESELECT_CATEGORIES":

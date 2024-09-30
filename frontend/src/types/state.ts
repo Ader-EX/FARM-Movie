@@ -18,7 +18,8 @@ export type SeriesType = MovieDataBaseType;
 export type StateType = {
   movies: MovieFileType[];
   actors: ActorType[];
-  categories: string[];
+  actorsSelected: ActorType[];
+  categories: CategoryType[];
   series: SeriesType[];
   studios: StudioType[];
 };
@@ -52,7 +53,7 @@ export type ActionType =
   | { type: Actions.SET_SERIES; payload: string }
   | { type: Actions.SET_STUDIO; payload: string }
   | { type: Actions.SELECT_MOVIE; payload: string[] }
-  | { type: Actions.SELECT_ACTORS; payload: string[] }
+  | { type: Actions.SELECT_ACTORS; payload: ActorType[] }
   | { type: Actions.SELECT_CATEGORIES; payload: string[] }
   | { type: Actions.SET_MOVIE_NAME; payload: string }
   | { type: Actions.DESELECT_MOVIE }

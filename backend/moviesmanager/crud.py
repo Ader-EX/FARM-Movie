@@ -64,6 +64,12 @@ def get_movie(db: Session, id: int) -> models.Movie:
 def get_category(db : Session, category_id : int)-> models.Category:
     return db.query(models.Category).filter(models.Category.id == category_id).first()
 
+def get_actor(db : Session, actor_id : int)-> models.Category:
+    return db.query(models.Actor).filter(models.Actor.id == actor_id).first()
+
+
+def get_all_category(db : Session)-> List[models.Category]:
+    return db.query(models.Category).order_by(models.Category.name).all()
 def get_all_studios(db : Session)-> List[models.Studio]:
     return db.query(models.Studio).order_by(models.Studio.id).all()
 
@@ -158,3 +164,39 @@ def add_movie_category(db : Session,movie_id : int, category_id : int ) -> model
     return movie
     
 
+def delete_movie_category(db : Session, movie_id : int, category_id :int) -> models.Movie:
+    movie = get_movie(db, movie_id)
+    category = get_category(db, category_id)
+    if movie is None or category is None:
+        return None
+    movie.categories.remove(category)
+    db.commit()
+    db.refresh(movie)
+    return movie
+
+
+def select_actors(db: Session, movie_id: int, actor_id: int):
+    movie = get_movie(db, movie_id)
+    actor = get_actor(db, actor_id)
+
+    if movie is None or actor is None:
+        return None
+
+  
+    if actor not in movie.actors:
+        movie.actors.append(actor)
+        db.commit()
+        db.refresh(movie)
+
+    return movie
+
+
+def delete_movie_actor(db : Session, movie_id : int, actor_id :int) -> models.Movie:
+    movie = get_movie(db, movie_id)
+    actor = get_actor(db, actor_id)
+    if movie is None or actor is None:
+        return None
+    movie.actors.remove(actor)
+    db.commit()
+    db.refresh(movie)
+    return movie

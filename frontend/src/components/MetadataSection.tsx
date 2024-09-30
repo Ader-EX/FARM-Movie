@@ -27,7 +27,7 @@ const MetadataSection = ({ formik }: FormikMovieProps) => {
     fetchStudios();
     // eslint-disable-next-line
   }, []);
-  console.log(state);
+
   return (
     <MovieSection
       title="Metadata"
